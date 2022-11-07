@@ -39,7 +39,7 @@ async function analyze_image(image) {
         })
     });
 
-    return clean_results;
+    return _.flatten(clean_results);
 }
 
 async function compare_images(image1, image2) {
