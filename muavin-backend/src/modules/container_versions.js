@@ -41,7 +41,36 @@ function mapResultItem(item) {
 }
 
 
+
+function split_image(image) {
+    const result = {};
+
+    const parts1 = image.split(":");
+    const parts2 = parts1[0].split("/");
+
+    if (parts1.length == 1) {
+        result.version = "latest";
+    } else if (parts1.length == 2) {
+        result.version = parts1[1];
+    } else {
+        console.error("Error");
+    }
+
+    if (parts2.length == 1) {
+        result.namespace = "";
+        result.name = "";
+    } else if (parts2.length == 2) {
+        result.namespace = parts2[0];
+        result.name = parts2[1];
+    } else {
+        console.error("Error");
+    }
+
+    return result;
+}
+
 module.exports = {
     getAvailableTags,
-    getAvailableTagsAfter
+    getAvailableTagsAfter, 
+    split_image
 }

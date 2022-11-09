@@ -1,6 +1,7 @@
 const _ = require("lodash");
 const cache = require("./cache");
 const trivy = require("../connectors/trivy");
+const container_versions = require("./container_versions");
 
 async function scan_with_cache(image) {
 
@@ -66,8 +67,56 @@ async function compare_images(image1, image2) {
     }
 }
 
+async function generate_matrix_images(image_versions) {
+
+    const mapp = {};
+
+    for (const im of image_versions) {
+        const scan = await analyze_image(im);
+
+        for (const vuln of scan) {
+            if (!mapp[vuln.VulnerabilityID]) {
+                mapp[vuln.VulnerabilityID] = {
+                    details: vuln,
+                    impacted_images: []
+                }
+            }
+
+            mapp[vuln.VulnerabilityID].impacted_images.push(im);
+        }
+    }
+
+    const vulnKeys = Object.keys(mapp);
+
+    const matrix = [];
+
+    for (const vkey of vulnKeys) {
+
+        const line = {
+            vuln_id: vkey,
+            vuln_type: mapp[vkey].details.Type,
+            vuln_severity: mapp[vkey].details.Severity,
+            vuln_score: mapp[vkey].details.Score,
+        }
+
+        for (const im of image_versions) {
+            if (mapp[vkey].impacted_images.includes(im)) {
+                line[container_versions.split_image(im).version] = "y";
+            } else {
+                line[container_versions.split_image(im).version] = " ";
+            }
+        }
+
+        matrix.push(line);
+    }
+
+    matrix.sort((a, b) => b.vuln_score - a.vuln_score);
+
+    return matrix;
+}
 
 module.exports = {
     analyze_image,
-    compare_images
+    compare_images,
+    generate_matrix_images
 }
