@@ -10,12 +10,19 @@ const router = createRouter({
       component: HomeView
     },
     {
-      path: '/about',
-      name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/AboutView.vue')
+      path: '/k8s/ingress',
+      name: 'k8s_ingress',
+      component: () => import('../views/KubernetesIngresses.vue')
+    },
+    {
+      path: '/k8s/images',
+      name: 'k8s_images',
+      component: () => import('../views/KubernetesImages.vue')
+    },
+    {
+      path: '/k8s/helm',
+      name: 'k8s_helm',
+      component: () => import('../views/KubernetesHelm.vue')
     }
   ]
 })
