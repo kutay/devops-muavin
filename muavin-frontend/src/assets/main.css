@@ -4,7 +4,7 @@
   font-weight: normal;
 
   display: grid;
-  grid-template-columns: minmax(125px, 25%) 1fr;
+  grid-template-columns: minmax(125px, 21%) 1fr;
 }
 
 a,

@@ -6,6 +6,11 @@ async function getContexts(request, reply) {
     return await kubernetes.getContexts();
 }
 
+async function getIngresses(request, reply) {
+    return await kubernetes.getIngresses();
+}
+
 module.exports = {
-    getContexts
+    getContexts,
+    getIngresses
 }

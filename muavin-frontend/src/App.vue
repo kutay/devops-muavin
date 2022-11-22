@@ -68,5 +68,9 @@ export default {
 <style scoped>
 DIV#app-content {
   width: 100%;
+  padding-right: 30px;
+  padding-left: 30px;
+  padding-top: 25px;
+  padding-bottom: 0px;
 }
 </style>

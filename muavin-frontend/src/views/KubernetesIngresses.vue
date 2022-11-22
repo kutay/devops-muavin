@@ -1,13 +1,28 @@
 <template>
   <div>
-    <table class="table">
+
+    <input class="input" />
+    <hr />
+
+    <table class="table is-striped is-bordered is-fullwidth">
+      <thead>
+        <tr>
+          <th>Namespace</th>
+          <th>Name</th>
+          <th>Ingress class</th>
+          <th>Nb Rules</th>
+          <th>Rules</th>
+        </tr>
+      </thead>
       <tbody>
         <tr v-for="ingress in ingressesByName">
           <td>{{ ingress.namespace }}</td>
           <td>{{ ingress.name }}</td>
           <td>{{ ingress.ingressClassName }}</td>
           <td>{{ ingress.rules.length }} rules</td>
-          <td>{{ ingress.rules.map((item) => item.host) }}</td>
+          <td>
+            <div v-for="rule in ingress.rules">{{ rule.host }}</div>
+          </td>
         </tr>
       </tbody>
     </table>
@@ -15,53 +30,12 @@
 </template>
 
 <script>
+import { mapState } from 'pinia'
+import { useKubernetes } from '@/stores/k8s'
 
 export default {
-  data() {
-    return {
-      ingresses: [
-        {
-          name: "foobar",
-          namespace: "default",
-          ingressClassName: "nginx",
-          rules: [
-            {
-              host: "example.com",
-              http: {
-                paths: [
-                  {
-                    path: "/",
-                    backend: {
-                      service: {
-                        name: "foo-bar",
-                        port: 80
-                      }
-                    }
-                  }
-                ]
-              }
-            }, {
-              host: "admin.example.com",
-              http: {
-                paths: [
-                  {
-                    path: "/",
-                    backend: {
-                      service: {
-                        name: "foo-bar",
-                        port: 80
-                      }
-                    }
-                  }
-                ]
-              }
-            }
-          ]
-        }
-      ]
-    }
-  },
   computed: {
+    ...mapState(useKubernetes, ['ingresses']),
     ingressesByName() {
       return this.ingresses;
     },
@@ -69,7 +43,11 @@ export default {
       // `this` points to the component instance
       return this.author.books.length > 0 ? 'Yes' : 'No'
     }
+  },
+  mounted() {
+    useKubernetes().fetchIngresses();
   }
+
 }
 </script>
 
